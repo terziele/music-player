@@ -1,0 +1,8 @@
+[package]
+name = "music-player"
+version = "0.1.0"
+authors = ["terziele <autushka.ihnat@gmail.com>"]
+
+[dependencies]
+gio = "^0.3.0"
+gtk = "^0.3.0"
