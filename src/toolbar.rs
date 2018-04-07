@@ -12,6 +12,7 @@ use App;
 use gtk:: {
     ToolButtonExt,
     WidgetExt,
+    ApplicationWindow
 };
 
 
@@ -75,7 +76,7 @@ impl MusicToolbar {
 
     }
 
-    pub fn toolbar(&self) -> Toolbar {
+    pub fn toolbar(&self) -> &Toolbar {
         &self.toolbar
     }
 

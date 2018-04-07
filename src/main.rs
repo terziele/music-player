@@ -14,6 +14,7 @@ use gtk::{
     ApplicationWindow,
     WidgetExt,
     GtkWindowExt,
+    ContainerExt,
 };
 
 use toolbar::MusicToolbar;
@@ -32,7 +33,7 @@ impl App {
 
 
         let music_toolbar = MusicToolbar::new();
-        window.add(&music_toolbar.toolbar());
+        window.add(music_toolbar.toolbar());
 
         window.show_all();
         
@@ -42,6 +43,7 @@ impl App {
         };
 
         app.connect_events();
+        app.connect_toolbar_events();
 
 
         app
@@ -57,7 +59,7 @@ fn main() {
         .expect("Unable to create an application");
     application.connect_startup(|application| {
 
-        App::new(&application)
+        App::new(&application);
     });
 
     application.connect_activate(|_|{});
