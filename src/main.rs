@@ -3,6 +3,8 @@ mod toolbar;
 
 extern crate gio;
 extern crate gtk;
+extern crate gdk_pixbuf;
+extern crate id3;
 
 use std::env;
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags};
@@ -17,11 +19,22 @@ use gtk::{
     ContainerExt,
 };
 
+use gtk::{
+    Adjustment,
+    Image,
+    ImageExt,
+    Scale,
+    ScaleExt
+};
+use gtk::Orientation::{Horizontal, Vertical};
+
 use toolbar::MusicToolbar;
 
 
 struct App {
     toolbar: MusicToolbar,
+    adjustment: Adjustment,
+    cover: Image,
     window: ApplicationWindow,
 }
 
@@ -33,12 +46,27 @@ impl App {
 
 
         let music_toolbar = MusicToolbar::new();
-        window.add(music_toolbar.toolbar());
+        let vbox = gtk::Box::new(Vertical, 0);
+        vbox.add(music_toolbar.toolbar());
+        window.add(&vbox);
+
+        let cover = Image::new();
+        cover.set_from_file("assets/cover.jpg");
+        vbox.add(&cover);
+
+        let adjustment = Adjustment::new(0.0, 0.0, 10.0, 0.0, 0.0, 0.0);
+        let scale = Scale::new(Horizontal, &adjustment);
+        scale.set_draw_value(false);
+        vbox.add(&scale);
+
+        //window.add(music_toolbar.toolbar());
 
         window.show_all();
         
         let app = App {
             toolbar: music_toolbar,
+            adjustment,
+            cover,
             window,
         };
 
