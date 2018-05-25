@@ -1,4 +1,5 @@
 mod toolbar;
+mod playlist;
 
 
 extern crate gio;
@@ -29,9 +30,11 @@ use gtk::{
 use gtk::Orientation::{Horizontal, Vertical};
 
 use toolbar::MusicToolbar;
+use playlist::Playlist;
 
 
 struct App {
+    playlist: Playlist,
     toolbar: MusicToolbar,
     adjustment: Adjustment,
     cover: Image,
@@ -50,6 +53,10 @@ impl App {
         vbox.add(music_toolbar.toolbar());
         window.add(&vbox);
 
+        // add playlist
+        let playlist = Playlist::new();
+        vbox.add(playlist.view());
+
         let cover = Image::new();
         cover.set_from_file("assets/cover.jpg");
         vbox.add(&cover);
@@ -64,6 +71,7 @@ impl App {
         window.show_all();
         
         let app = App {
+            playlist,
             toolbar: music_toolbar,
             adjustment,
             cover,

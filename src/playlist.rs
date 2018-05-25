@@ -1,4 +1,4 @@
-mod playlist;
+//mod playlist;
 
 
 use std::path::Path;
@@ -13,7 +13,7 @@ use gtk::{
     StaticType,
     ToValue,
     TreeIter,
-    TreeModeExt,
+    TreeModelExt,
     TreeSelectionExt,
     TreeView,
     TreeViewColumn,
@@ -23,6 +23,8 @@ use gtk::{
     WidgetExt,
 };
 use id3::Tag;
+
+use self::Visibility::*;
 
 const THUMBNAIL_COLUMN: u32 = 0;
 const TITLE_COLUMN: u32 = 1;
@@ -41,4 +43,79 @@ const THUMBNAIL_SIZE: i32 = 64;
 pub struct Playlist {
     model: ListStore,
     treeview: TreeView,
+}
+
+impl Playlist {
+
+    /// Creates new instance of playlist
+    pub fn new() -> Self {
+        let model = ListStore::new(&[
+                                   Pixbuf::static_type(),
+                                   Type::String,
+                                   Type::String,
+                                   Type::String,
+                                   Type::String,
+                                   Type::String,
+                                   Type::String,
+                                   Type::String,
+                                   Pixbuf::static_type(),
+        ]);
+        let treeview = TreeView::new_with_model(&model);
+        treeview.set_hexpand(true);
+        treeview.set_vexpand(true);
+
+        Self::create_columns(&treeview);
+
+        Playlist {
+            model,
+            treeview,
+        }
+    }
+
+
+    /// Gets the treeview
+    pub fn view(&self) -> &TreeView {
+        &self.treeview
+    }
+
+    /// Fills treeview with columns
+    fn create_columns(treeview: &TreeView) {
+        Self::add_pixbuf_column(treeview, THUMBNAIL_COLUMN as i32, Visible);
+        Self::add_text_column(treeview, "Title", TITLE_COLUMN as i32);
+        Self::add_text_column(treeview, "Artist", ARTIST_COLUMN as i32);
+        Self::add_text_column(treeview, "Album", ALBUM_COLUMN as i32);
+        Self::add_text_column(treeview, "Genre", GENRE_COLUMN as i32);
+        Self::add_text_column(treeview, "Year", YEAR_COLUMN as i32);
+        Self::add_text_column(treeview, "Track", TRACK_COLUMN as i32);
+        Self::add_pixbuf_column(treeview, PIXBUF_COLUMN as i32, Invisible);
+    }
+
+    /// Creates text column and adds it to `treeview`
+    fn add_text_column(treeview: &TreeView, title: &str, column: i32) {
+        let view_column = TreeViewColumn::new();
+        view_column.set_title(title);
+        let cell = CellRendererText::new();
+        view_column.set_expand(true);
+        view_column.pack_start(&cell, true);
+        view_column.add_attribute(&cell, "text", column);
+        treeview.append_column(&view_column);
+    }
+
+    /// Creates pixbuf column
+    fn add_pixbuf_column(treeview: &TreeView, column: i32, visibility: Visibility) {
+        let view_column = TreeViewColumn::new();
+        if visibility == Visible {
+            let cell = CellRendererPixbuf::new();
+            view_column.pack_start(&cell, true);
+            view_column.add_attribute(&cell, "pixbuf", column);
+        }
+        treeview.append_column(&view_column);
+    }
+
+}
+
+#[derive(PartialEq)]
+enum Visibility {
+    Visible,
+    Invisible,
 }
