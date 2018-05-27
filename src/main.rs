@@ -6,8 +6,10 @@ extern crate gio;
 extern crate gtk;
 extern crate gdk_pixbuf;
 extern crate id3;
+extern crate gtk_sys;
 
 use std::env;
+use std::rc::Rc;
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags};
 
 use gtk::{
@@ -34,7 +36,7 @@ use playlist::Playlist;
 
 
 struct App {
-    playlist: Playlist,
+    playlist: Rc<Playlist>,
     toolbar: MusicToolbar,
     adjustment: Adjustment,
     cover: Image,
@@ -54,7 +56,7 @@ impl App {
         window.add(&vbox);
 
         // add playlist
-        let playlist = Playlist::new();
+        let playlist = Rc::new(Playlist::new());
         vbox.add(playlist.view());
 
         let cover = Image::new();
