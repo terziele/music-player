@@ -15,7 +15,20 @@ use gtk:: {
     ApplicationWindow
 };
 
+use gtk::{
+    FileChooserAction,
+    FileChooserDialog, 
+    FileFilter,
+    FileFilterExt,
+};
 
+
+use std::path::PathBuf;
+
+use gtk_sys::{GTK_RESPONSE_ACCEPT, GTK_RESPONSE_CANCEL};
+
+const RESPONSE_ACCEPT: i32 = GTK_RESPONSE_ACCEPT as i32;
+const RESPONSE_CANCEL: i32 = GTK_RESPONSE_CANCEL as i32;
 
 
 const PLAY_STOCK: &str = "gtk-media-play";
@@ -76,8 +89,31 @@ impl MusicToolbar {
 
     }
 
+    /// Getter for a toolbar
     pub fn toolbar(&self) -> &Toolbar {
         &self.toolbar
+    }
+
+    /// Show dialog window for user to choose audio file to play
+    fn show_open_dialog(parent: &ApplicationWindow) -> Option<PathBuf> {
+        let mut file = None;
+
+        let dialog = FileChooserDialog::new(Some("Select an MP3 file to play"), Some(parent), FileChooserAction::Open);
+        let filter = FileFilter::new();
+        filter.add_mime_type("audio/mp3");
+        filter.set_name("MP3 audio file");
+        dialog.add_filter(&filter);
+
+        dialog.add_button("Cancel", RESPONSE_CANCEL);
+        dialog.add_button("Accept", RESPONSE_ACCEPT);
+
+        let result = dialog.run();
+        if result == RESPONSE_ACCEPT {
+            file = dialog.get_filename();
+        }
+        dialog.destroy();
+
+        file
     }
 
 
