@@ -18,8 +18,11 @@ use gtk:: {
 use gtk::{
     FileChooserAction,
     FileChooserDialog, 
+    FileChooserExt,
     FileFilter,
     FileFilterExt,
+    DialogExt,
+
 };
 
 
@@ -123,9 +126,24 @@ impl MusicToolbar {
 impl App {
     pub fn connect_toolbar_events(&self) {
         let window = self.window.clone();
+
+        // bind quit event to quit button
         self.toolbar.quit_button.connect_clicked(move |_| {
             window.destroy();
         });
+
+        // bind open button to open dialog window 
+        let playlist = self.playlist.clone();
+        let window_clone = self.window.clone();
+        self.toolbar.open_button.connect_clicked(move |_| {
+            let file = MusicToolbar::show_open_dialog(&window_clone);
+
+            if let Some(file) = file {
+                playlist.add(&file.to_path_buf());
+            }
+
+        });
+
     }
 }
 
