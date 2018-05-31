@@ -8,6 +8,8 @@ use gtk::{
 };
 
 use App;
+use Playlist;
+use gtk::{Image, ImageExt};
 
 use gtk:: {
     ToolButtonExt,
@@ -125,6 +127,38 @@ impl MusicToolbar {
 
 impl App {
     pub fn connect_toolbar_events(&self) {
+        self.bind_quit_button();
+        self.bind_open_button();
+        self.bind_remove_button();
+        self.bind_play_button();
+
+
+    }
+
+    /// Binds events with `play_button`
+    fn bind_play_button(&self) {
+        let playlist = self.playlist.clone();
+        let cover = self.cover.clone();
+        let play_button = self.toolbar.play_button.clone();
+        self.toolbar.play_button.connect_clicked(move |_| {
+            if play_button.get_stock_id() == Some(PLAY_STOCK.to_string()) {
+                play_button.set_stock_id(PAUSE_STOCK);
+                Self::set_cover(&cover, &playlist);
+            } else {
+                play_button.set_stock_id(PLAY_STOCK);
+            }
+        });
+    }
+
+    /// Sets cover from current track
+    fn set_cover(cover: &Image, playlist: &Playlist) {
+        cover.set_from_pixbuf(playlist.current_track_cover().as_ref());
+        cover.show();
+    }
+
+    /// Binds quit button with window closing
+    fn bind_quit_button(&self) {
+
         let window = self.window.clone();
 
         // bind quit event to quit button
@@ -132,6 +166,10 @@ impl App {
             window.destroy();
         });
 
+    }
+
+    /// Binds `open_button` to add to playlist functionality
+    fn bind_open_button(&self) {
         // bind open button to open dialog window 
         let playlist = self.playlist.clone();
         let window_clone = self.window.clone();
@@ -143,7 +181,16 @@ impl App {
             }
 
         });
+    }
 
+    /// Binds `remove_button` with remove selection functionality
+    fn bind_remove_button(&self) {
+        let window = self.window.clone();
+        let playlist = self.playlist.clone();
+
+        self.toolbar.remove_button.connect_clicked(move |_| {
+            playlist.remove_selection();
+        });
     }
 }
 

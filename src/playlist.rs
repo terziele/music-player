@@ -123,6 +123,26 @@ impl Playlist {
         self.model.set_value(&row, PATH_COLUMN, &path.to_value());
     }
 
+    /// Removes selected item from `playlist`
+    pub fn remove_selection(&self)  {
+        let selection = self.treeview.get_selection();
+
+        if let Some((_, iter)) = selection.get_selected() {
+            self.model.remove(&iter);
+        }
+    }
+
+    /// Get cover of current track
+    pub fn current_track_cover(&self) -> Option<Pixbuf> {
+        let selection = self.treeview.get_selection();
+        if let Some((_, iter)) = selection.get_selected() {
+            let value = self.model.get_value(&iter, PIXBUF_COLUMN as i32);
+            return value.get::<Pixbuf>()
+        }
+
+        None
+    }
+
     /// Fills treeview with columns
     fn create_columns(treeview: &TreeView) {
         Self::add_pixbuf_column(treeview, THUMBNAIL_COLUMN as i32, Visible);
