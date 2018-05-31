@@ -60,7 +60,7 @@ impl App {
         vbox.add(playlist.view());
 
         let cover = Image::new();
-        cover.set_from_file("assets/cover.jpg");
+//        cover.set_from_file("assets/cover.jpg");
         vbox.add(&cover);
 
         let adjustment = Adjustment::new(0.0, 0.0, 10.0, 0.0, 0.0, 0.0);
