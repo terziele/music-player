@@ -1,32 +1,14 @@
+use gtk::{ContainerExt, SeparatorToolItem, ToolButton, Toolbar};
 
-
-use gtk::{
-    ContainerExt,
-    SeparatorToolItem,
-    Toolbar,
-    ToolButton
-};
-
+use gtk::{Image, ImageExt};
 use App;
 use Playlist;
-use gtk::{Image, ImageExt};
 
-use gtk:: {
-    ToolButtonExt,
-    WidgetExt,
-    ApplicationWindow
-};
+use gtk::{ApplicationWindow, ToolButtonExt, WidgetExt};
 
 use gtk::{
-    FileChooserAction,
-    FileChooserDialog, 
-    FileChooserExt,
-    FileFilter,
-    FileFilterExt,
-    DialogExt,
-
+    DialogExt, FileChooserAction, FileChooserDialog, FileChooserExt, FileFilter, FileFilterExt,
 };
-
 
 use std::path::PathBuf;
 
@@ -35,10 +17,8 @@ use gtk_sys::{GTK_RESPONSE_ACCEPT, GTK_RESPONSE_CANCEL};
 const RESPONSE_ACCEPT: i32 = GTK_RESPONSE_ACCEPT as i32;
 const RESPONSE_CANCEL: i32 = GTK_RESPONSE_CANCEL as i32;
 
-
 const PLAY_STOCK: &str = "gtk-media-play";
 const PAUSE_STOCK: &str = "gtk-media-pause";
-
 
 pub struct MusicToolbar {
     open_button: ToolButton,
@@ -53,11 +33,9 @@ pub struct MusicToolbar {
 
 impl MusicToolbar {
     pub fn new() -> Self {
-
         let toolbar = Toolbar::new();
         let open_button = ToolButton::new_from_stock("gtk-open");
         toolbar.add(&open_button);
-
 
         toolbar.add(&SeparatorToolItem::new());
 
@@ -80,7 +58,7 @@ impl MusicToolbar {
 
         let quit_button = ToolButton::new_from_stock("gtk-quit");
         toolbar.add(&quit_button);
-        
+
         MusicToolbar {
             open_button,
             next_button,
@@ -91,7 +69,6 @@ impl MusicToolbar {
             stop_button,
             toolbar,
         }
-
     }
 
     /// Getter for a toolbar
@@ -103,7 +80,11 @@ impl MusicToolbar {
     fn show_open_dialog(parent: &ApplicationWindow) -> Option<PathBuf> {
         let mut file = None;
 
-        let dialog = FileChooserDialog::new(Some("Select an MP3 file to play"), Some(parent), FileChooserAction::Open);
+        let dialog = FileChooserDialog::new(
+            Some("Select an MP3 file to play"),
+            Some(parent),
+            FileChooserAction::Open,
+        );
         let filter = FileFilter::new();
         filter.add_mime_type("audio/mp3");
         filter.set_name("MP3 audio file");
@@ -120,10 +101,7 @@ impl MusicToolbar {
 
         file
     }
-
-
 }
-
 
 impl App {
     pub fn connect_toolbar_events(&self) {
@@ -131,8 +109,6 @@ impl App {
         self.bind_open_button();
         self.bind_remove_button();
         self.bind_play_button();
-
-
     }
 
     /// Binds events with `play_button`
@@ -158,19 +134,17 @@ impl App {
 
     /// Binds quit button with window closing
     fn bind_quit_button(&self) {
-
         let window = self.window.clone();
 
         // bind quit event to quit button
         self.toolbar.quit_button.connect_clicked(move |_| {
             window.destroy();
         });
-
     }
 
     /// Binds `open_button` to add to playlist functionality
     fn bind_open_button(&self) {
-        // bind open button to open dialog window 
+        // bind open button to open dialog window
         let playlist = self.playlist.clone();
         let window_clone = self.window.clone();
         self.toolbar.open_button.connect_clicked(move |_| {
@@ -179,7 +153,6 @@ impl App {
             if let Some(file) = file {
                 playlist.add(&file.to_path_buf());
             }
-
         });
     }
 
@@ -193,4 +166,3 @@ impl App {
         });
     }
 }
-
