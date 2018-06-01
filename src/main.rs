@@ -14,6 +14,8 @@ extern crate simplemad;
 
 use std::env;
 use std::rc::Rc;
+use std::time::Duration;
+
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags};
 
 use gtk::{
@@ -94,6 +96,11 @@ impl App {
     fn connect_events(&self) {
         // do nothing now
     }
+}
+
+/// Converts `Duration` to milliseconds
+fn to_millis(duration: Duration) -> u64 {
+    duration.as_secs() * 1000 + duration.subsec_nanos() as u64 / 1_000_000
 }
 
 fn main() {
