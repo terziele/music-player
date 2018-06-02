@@ -26,7 +26,6 @@ use gtk::{Adjustment, Image, ImageExt, Scale, ScaleExt};
 
 use playlist::Playlist;
 use toolbar::MusicToolbar;
-use player::State;
 
 struct App {
     playlist: Rc<Playlist>,
@@ -81,6 +80,11 @@ impl App {
     fn connect_events(&self) {
         // do nothing now
     }
+}
+
+
+struct State {
+    stopped: bool,
 }
 
 /// Converts `Duration` to milliseconds

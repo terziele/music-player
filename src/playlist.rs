@@ -12,7 +12,9 @@ use std::sync::{Arc, Mutex};
 
 
 use self::Visibility::*;
-use player::State;
+use State;
+use player::{Player};
+
 
 const THUMBNAIL_COLUMN: u32 = 0;
 const TITLE_COLUMN: u32 = 1;
@@ -31,12 +33,13 @@ const INTERP_HYPER: InterpType = 3;
 
 pub struct Playlist {
     model: ListStore,
+    player: Player,
     treeview: TreeView,
 }
 
 impl Playlist {
     /// Creates new instance of playlist
-    pub fn new(state: Arc<Mutex<State>>) -> Self {
+    pub(crate) fn new(state: Arc<Mutex<State>>) -> Self {
         let model = ListStore::new(&[
             Pixbuf::static_type(),
             Type::String,
@@ -54,7 +57,11 @@ impl Playlist {
 
         Self::create_columns(&treeview);
 
-        Playlist { model, treeview }
+        Playlist {
+            model, 
+            player: Player::new(state.clone()),
+            treeview 
+        }
     }
 
     /// Gets the treeview
