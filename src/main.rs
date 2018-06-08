@@ -1,7 +1,7 @@
 mod mp3;
+mod player;
 mod playlist;
 mod toolbar;
-mod player;
 
 extern crate crossbeam;
 extern crate gdk_pixbuf;
@@ -14,8 +14,8 @@ extern crate simplemad;
 
 use std::env;
 use std::rc::Rc;
-use std::time::Duration;
 use std::sync::{Arc, Mutex};
+use std::time::Duration;
 
 use gio::{ApplicationExt, ApplicationExtManual, ApplicationFlags};
 
@@ -46,7 +46,6 @@ impl App {
         vbox.add(music_toolbar.toolbar());
         window.add(&vbox);
 
-        
         let state = Arc::new(Mutex::new(State::new(true)));
         // add playlist
         let playlist = Rc::new(Playlist::new(state.clone()));
@@ -81,7 +80,6 @@ impl App {
         // do nothing now
     }
 }
-
 
 struct State {
     stopped: bool,

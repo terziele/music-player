@@ -7,11 +7,11 @@ use std::thread;
 use crossbeam::sync::SegQueue;
 use pulse_simple::Playback;
 
-use mp3::Mp3Decoder;
 use self::Action::*;
+use mp3::Mp3Decoder;
 use State;
 
-const BUFFER_SIZE: usize =  1000;
+const BUFFER_SIZE: usize = 1000;
 const DEFAULT_RATE: usize = 44100;
 
 enum Action {
@@ -25,7 +25,6 @@ struct EventLoop {
     playing: Arc<Mutex<bool>>,
 }
 
-
 impl EventLoop {
     /// Creates new instance of `EventLoop`
     fn new() -> Self {
@@ -36,7 +35,6 @@ impl EventLoop {
     }
 }
 
-
 impl State {
     pub fn new(initial_state: bool) -> Self {
         State {
@@ -46,7 +44,7 @@ impl State {
 }
 
 pub struct Player {
-    app_state: Arc<Mutex<State>>, 
+    app_state: Arc<Mutex<State>>,
     event_loop: EventLoop,
 }
 
@@ -67,19 +65,16 @@ impl Player {
                         match action {
                             Load(path) => {
                                 let file = File::open(path).unwrap();
-                                source = Some(
-                                    Mp3Decoder::new(BufReader::new(file)).unwrap()
-                                    );
+                                source = Some(Mp3Decoder::new(BufReader::new(file)).unwrap());
 
-                                let rate = source.as_ref()
+                                let rate = source
+                                    .as_ref()
                                     .map(|source| source.sample_rate())
                                     .unwrap_or(DEFAULT_RATE as u32);
-                                playback = Playback::new("MP3", "MP3 Playback",
-                                                         None,rate);
-                                app_state.lock().unwrap()
-                                                         .stopped = false;
-                            }, 
-                            Stop => {},
+                                playback = Playback::new("MP3", "MP3 Playback", None, rate);
+                                app_state.lock().unwrap().stopped = false;
+                            }
+                            Stop => {}
                         }
                     }
                 }

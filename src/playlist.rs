@@ -10,11 +10,9 @@ use id3::Tag;
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 
-
 use self::Visibility::*;
+use player::Player;
 use State;
-use player::{Player};
-
 
 const THUMBNAIL_COLUMN: u32 = 0;
 const TITLE_COLUMN: u32 = 1;
@@ -58,9 +56,9 @@ impl Playlist {
         Self::create_columns(&treeview);
 
         Playlist {
-            model, 
+            model,
             player: Player::new(state.clone()),
-            treeview 
+            treeview,
         }
     }
 
