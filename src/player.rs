@@ -76,6 +76,22 @@ impl Player {
                             }
                             Stop => {}
                         }
+                    } else if *event_loop.playing.lock().unwrap() {
+                        let mut written = false;
+
+                        if let Some(ref mut source) = source {
+                            let size = iter_to_buffer(source, &mut buffer);
+                            if size > 0 {
+                                playback.write(&buffer[..size]);
+                                written = true;
+                            }
+                        }
+
+                        if !written {
+                            app_state.lock().unwrap().stopped = true;
+                            *event_loop.playing.lock().unwrap() = false;
+                            source = None;
+                        }
                     }
                 }
             });
@@ -86,4 +102,23 @@ impl Player {
             event_loop,
         }
     }
+}
+
+fn iter_to_buffer<I: Iterator<Item = i16>>(
+    iter: &mut I,
+    buffer: &mut [[i16; 2]; BUFFER_SIZE],
+) -> usize {
+    let mut iter = iter.take(BUFFER_SIZE);
+    let mut index = 0;
+
+    while let Some(sample1) = iter.next() {
+        if let Some(sample2) = iter.next() {
+            buffer[index][0] = sample1;
+            buffer[index][1] = sample2;
+        }
+
+        index += 1;
+    }
+
+    index
 }

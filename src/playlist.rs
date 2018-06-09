@@ -187,7 +187,20 @@ impl Playlist {
         }
         treeview.append_column(&view_column);
     }
+
+    /// Gets path to selected audiofile as `String`
+    fn selected_path(&self) -> Option<String> {
+        let selection = self.treeview.get_selection();
+
+        if let Some((_, iter) = selection.get_selection() {
+            let value = self.model.get_value(&iter, PATH_COLUMN as i32);
+            return value.get::<String>();
+        }
+
+        None
+    }
 }
+    
 
 #[derive(PartialEq)]
 enum Visibility {
