@@ -192,12 +192,22 @@ impl Playlist {
     fn selected_path(&self) -> Option<String> {
         let selection = self.treeview.get_selection();
 
-        if let Some((_, iter) = selection.get_selection() {
+        if let Some((_, iter)) = selection.get_selected() {
             let value = self.model.get_value(&iter, PATH_COLUMN as i32);
             return value.get::<String>();
         }
 
         None
+    }
+
+    /// Plays selected audiofile
+    pub fn play(&self) -> bool {
+        if let Some(path) = self.selected_path() {
+            self.player.load(&path);
+            true
+        } else {
+            false
+        }
     }
 }
     
